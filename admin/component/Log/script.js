@@ -1,5 +1,3 @@
-
-
 let templateFile = await fetch('./component/Log/template.html');
 let template = await templateFile.text();
 
@@ -38,7 +36,6 @@ Log.format = function(txt){
     html = html.replace("{{logs}}", formatHistory());
     return html;
 }
-
 
 export {Log};
 
