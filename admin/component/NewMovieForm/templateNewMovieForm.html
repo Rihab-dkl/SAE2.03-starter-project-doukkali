@@ -1,0 +1,41 @@
+<form method="post" action="{{handler}}" class="form">
+  <h2 class="form__title">Ajouter un film</h2>
+
+  <label for="name" class="form__label">Nom du film</label>
+  <input type="text" name="name" id="name" class="form__input" required placeholder="Ex: Inception">
+
+  <label for="year" class="form__label">Année de sortie</label>
+  <input type="number" name="year" id="year" class="form__input" required min="1900" placeholder="Ex: 2010">
+
+  <label for="length" class="form__label">Durée (en minutes)</label>
+  <input type="number" name="length" id="length" class="form__input" required min="1" placeholder="Ex: 148">
+
+  <label for="description" class="form__label">Description</label>
+  <textarea name="description" id="description" class="form__input" required placeholder="Brève description du film..."></textarea>
+
+  <label for="director" class="form__label">Réalisateur</label>
+  <input type="text" name="director" id="director" class="form__input" required placeholder="Ex: Christopher Nolan">
+
+  <label for="image" class="form__label">Nom du fichier image</label>
+  <input type="text" name="image" id="image" class="form__input" required placeholder="Ex: inception.jpg">
+
+  <label for="trailer" class="form__label">URL de la bande-annonce</label>
+  <input type="url" name="trailer" id="trailer" class="form__input" required placeholder="https://...">
+
+  <label for="min_age" class="form__label">Âge minimum</label>
+  <input type="number" name="min_age" id="min_age" class="form__input" required min="0" placeholder="Ex: 12">
+
+  <label for="id_category" class="form__label">Catégorie</label>
+  <select name="id_category" id="id_category" class="form__input" required>
+    <option value="">-- Choisir une catégorie --</option>
+    <option value="1">Action</option>
+    <option value="2">Comédie</option>
+    <option value="3">Drame</option>
+    <option value="4">Science-fiction</option>
+    <option value="5">Horreur</option>
+    <option value="6">Animation</option>
+    <option value="7">Documentaire</option>
+  </select>
+
+  <input type="submit" value="Ajouter" class="form__submit">
+</form>

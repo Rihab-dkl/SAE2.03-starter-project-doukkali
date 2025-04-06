@@ -1,4 +1,5 @@
 <?php
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 /** ARCHITECTURE PHP SERVEUR : Rôle du fichier script.php
@@ -55,6 +56,9 @@ if ( isset($_REQUEST['todo']) ){
   switch($todo){
     case "readMovies":
       $data = readMoviesController();
+      break;
+    case "createMovie":
+      $data = createMovieController();
       break;
     default: // il y a un paramètre todo mais sa valeur n'est pas reconnue/supportée
       echo json_encode('[error] Unknown todo value');

@@ -5,3 +5,5 @@
 @import "./utilities.css" layer(utilities);
 
 @import "../component/Log/style.css" layer(components);
+@import "../component/NewMovieForm/style.css" layer(components);
+

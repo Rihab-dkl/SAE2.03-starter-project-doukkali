@@ -8,17 +8,29 @@
   </head>
   <body>
     <section id="log"></section>
+    <section id="addMovie"></section>
 
     <script type="module">
       import { Log } from "./component/Log/script.js";
+      import { NewMovieForm } from "./component/NewMovieForm/script.js";
+      import { DataForm } from "./data/dataForm.js";
 
       window.C = {};
 
       C.start = function () {
         V.renderLog("Démarrage de l'application");
+        V.renderNewMeovie("../server/script.php?todo=createMovie");
       };
 
       window.V = {};
+
+      V.renderNewMeovie = function(handler) {
+        let content = document.querySelector("#addMovie");
+        content.innerHTML = NewMovieForm.format(handler);
+        if (typeof NewMovieForm.listen === "function") {
+          NewMovieForm.listen();
+        }
+      };
 
       V.renderLog = function (txt) {
         let content = document.querySelector("#log");
