@@ -11,14 +11,13 @@
     <header id="header"></header>
     <section id="content" class="movie-container"></section>
 
-
     <script type="module">
       import { NavBar } from "./component/NavBar/script.js";
       import { DataMovie } from "./data/dataMovie.js";
       import { Movie } from "./component/Movie/script.js";
+      import { MovieDetail } from "./component/MovieDetail/script.js";
 
       window.C = {};
-
 
       C.handlerAbout = function () {
         alert("Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !");
@@ -29,27 +28,26 @@
         V.renderMovies(films);
       };
 
+      C.handlerDetail = async function (id) {
+        let film = await DataMovie.requestMovieDetail(id);
+        V.renderMovieDetail(film);
+      };
+
       C.start = function () {
         V.renderNavBar("C.handlerAbout()");
         C.handlerReadMovies();
       };
 
-      // Vue (affichage)
+      // Vue 
       window.V = {};
 
-      /**
-       * V.renderNavBar
-       * Affiche la NavBar dans l'élément header.
-       */
+
       V.renderNavBar = function (hAbout) {
         let header = document.querySelector("#header");
         header.innerHTML = NavBar.format(hAbout);
       };
 
-      /**
-       * V.renderMovies
-       * Affiche la liste des films dans l'élément content.
-       */
+
       V.renderMovies = function (films) {
         let content = document.querySelector("#content");
         if (!films || films.length === 0) {
@@ -59,7 +57,16 @@
         }
       };
 
-      C.start(); 
+      V.renderMovieDetail = function (film) {
+        let content = document.querySelector("#content");
+        if (!film) {
+          content.innerHTML = "<p>Film introuvable.</p>";
+          return;
+        }
+        content.innerHTML = MovieDetail.format(film);
+      };
+
+      C.start();
     </script>
   </body>
 </html>

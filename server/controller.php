@@ -57,4 +57,22 @@ function createMovieController() {
         return false;
     }
 }
+
+/**
+ * readMovieDetailController
+ * 
+ * Fonction de contrôle pour le traitement des requêtes HTTP 'readMovieDetail'.
+ * Elle vérifie la présence du paramètre 'id' dans la requête GET,
+ * puis appelle la fonction getMovieDetail du modèle pour récupérer les détails du film.
+ *
+ * @return mixed Un tableau associatif contenant les détails du film, ou false en cas d'erreur.
+ */
+function readMovieDetailController() {
+    if (isset($_GET["id"]) && !empty($_GET["id"])) {
+        $id = intval($_GET["id"]);
+        return getMovieDetail($id);
+    } else {
+        return false;
+    }
+}
 ?>

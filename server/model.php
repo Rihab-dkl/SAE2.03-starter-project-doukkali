@@ -19,7 +19,7 @@ define("DBPWD", "doukkali-el-u1");
 /**  
  * Récupère la liste des films dans la base de données.
  *
- * @return array Un tableau d'objets contenant l'id, le titre (alias 'title') et l'image pour chaque film.
+ * @return array Un tableau d'objets contenant l'id, le nom et l'image pour chaque film.
  */
 function getMovies(){
     // Connexion à la base de données
@@ -36,24 +36,24 @@ function getMovies(){
 }
 
 /**
- * Insère un nouveau film dans la base de données.
+ * Insère 
  *
- * @param string $name        Le nom du film.
- * @param int    $year        L'année de sortie du film.
- * @param int    $length      La durée du film en minutes.
- * @param string $description La description du film.
- * @param string $director    Le nom du réalisateur.
- * @param string $image       Le nom du fichier image.
- * @param string $trailer     Lien vers la bande-annonce.
- * @param int    $min_age     L'âge minimum recommandé.
- * @param int    $id_category L'identifiant de la catégorie.
+ * @param string $name
+ * @param int    $year
+ * @param int    $length
+ * @param string $description
+ * @param string $director
+ * @param string $image
+ * @param string $trailer
+ * @param int    $min_age
+ * @param int    $id
  *
- * @return bool Retourne true si l'insertion a réussi, false sinon.
+ * @return bool
  */
-function createMovie($name, $year, $length, $description, $director, $image, $trailer, $min_age, $id_category) {
+function createMovie($name, $year, $length, $description, $director, $image, $trailer, $min_age, $id) {
     $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME, DBLOGIN, DBPWD);
-    $sql = "INSERT INTO Movie (name, year, length, description, director, image, trailer, min_age, id_category)
-            VALUES (:name, :year, :length, :description, :director, :image, :trailer, :min_age, :id_category)";
+    $sql = "INSERT INTO Movie (name, year, length, description, director, image, trailer, min_age, id)
+            VALUES (:name, :year, :length, :description, :director, :image, :trailer, :min_age, :id)";
     $stmt = $cnx->prepare($sql);
     return $stmt->execute([
         ":name" => $name,
@@ -64,7 +64,22 @@ function createMovie($name, $year, $length, $description, $director, $image, $tr
         ":image" => $image,
         ":trailer" => $trailer,
         ":min_age" => $min_age,
-        ":id_category" => $id_category
+        ":id" => $id
     ]);
+}
+
+/**
+ * Récupère 
+ *
+ * @param int $id
+ * @return mixed tableau contenant les détails du film, ou false si aucun film n'est trouvé.
+ */
+function getMovieDetail($id) {
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT * FROM Movie WHERE id = :id";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute([":id" => $id]);
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res;
 }
 ?>
