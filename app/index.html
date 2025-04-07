@@ -22,6 +22,9 @@
       C.handlerAbout = function () {
         alert("Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !");
       };
+      C.handlerHome = function () {
+        C.handlerReadMovies();;
+      };
 
       C.handlerReadMovies = async function () {
         let films = await DataMovie.requestMovies();
@@ -34,7 +37,7 @@
       };
 
       C.start = function () {
-        V.renderNavBar("C.handlerAbout()");
+        V.renderNavBar("C.handlerAbout()", "C.handlerHome()");
         C.handlerReadMovies();
       };
 
@@ -42,9 +45,9 @@
       window.V = {};
 
 
-      V.renderNavBar = function (hAbout) {
-        let header = document.querySelector("#header");
-        header.innerHTML = NavBar.format(hAbout);
+      V.renderNavBar = function (hAbout, hHome) {
+      let header = document.querySelector("#header");
+      header.innerHTML = NavBar.format(hAbout, hHome);
       };
 
 
