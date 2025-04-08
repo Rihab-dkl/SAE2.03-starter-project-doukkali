@@ -1,6 +1,19 @@
 <nav class="navbar font-sans">
   <ul class="navbar__list">
-    <li class="navbar__item" onclick="{{hAbout}}">About</li>
-    <li class="navbar__item" onclick="{{hHome}}">Home</li>
+    <div class="navbar__links">
+      <li class="navbar__item" onclick="{{hAbout}}">About</li>
+      <li class="navbar__item" onclick="{{hHome}}">Home</li>
+    </div>
+    <div class="navbar__profile">
+      <li class="navbar__item">
+        <select id="profile-select" onchange="C.handlerProfile()">
+          <option>None</option>
+          {{profileOptions}}
+        </select>
+      </li>
+      <li class="navbar__item">
+        <img id="profile-picture" src="../../../server/images/{{photo_profil}}" alt="profil" class="profile-picture" />
+      </li>
+    </div>
   </ul>
 </nav>

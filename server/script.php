@@ -1,99 +1,58 @@
 <?php
-
-
-
-/** ARCHITECTURE PHP SERVEUR : Rôle du fichier script.php
- * 
- * Ce fichier est celui à qui on adresse toutes les requêtes HTTP.
- * Pour être valide, on décide que chaque requête doit contenir un paramètre 'todo'.
- * C'est un choix d'implémentation, on aurait pu choisir un autre nom de paramètre.
- * L'interprétation de la requête se fait en fonction de la valeur du paramètre 'todo'.
- * Selon cette valeur, on fait appelle à la fonction de contrôleur (voir controller.php)
- * appropriée pour traiter la requête HTTP et produire la réponse HTTP attendue..
- * 
- * Pourquoi faire comme ça ?
- * 
- *  En ajoutant un paramètre 'todo' dans la requête, on a un seul paramètre à regarder pour déterminer l'action à effectuer.
- *  Sinon il faudrait toujours analyser tous les paramètres de la requête pour déterminer l'action à effectuer.
- *  Et dans une véritable application il peut y avoir énormément de paramètres, ce qui deviendrait compliqué et illisible.
- * 
- */
-
-/**
- * Inclusion du fichier controller.php.
- * 
- * Il contient les fonctions nécessaires pour traiter chaque type de requête
- * et définir la réponse à renvoyer au client.
- */
 require("controller.php");
 
-/**
- * Vérifie si la variable 'todo' est définie dans la requête.
- * 
- * Cette condition permet de déterminer si un paramètre 'todo' a été envoyé
- * via une requête HTTP. 
- * Si ce paramètre est présent, le code à l'intérieur du bloc conditionnel sera exécuté.
- */
-if ( isset($_REQUEST['todo']) ){
+if (isset($_REQUEST["todo"])) {
+    header("Content-Type: application/json");
+    $todo = $_REQUEST["todo"];
 
-  /**
-   * La fonction PHP header permet de définir l'en-tête HTTP de la réponse.
-   * 
-   * A ce stade on sait qu'on va répondre à la requête HTTP avec du contenu JSON (même pour signaler une erreur).
-   * Donc on définit de suite l'en-tête de la réponse HTTP pour indiquer que le contenu sera de type JSON.
-   * Ce n'est pas obligatoire, mais c'est une bonne pratique pour indiquer clairement le type de contenu.
-   * Le client à qui on répond pourra tester le type de contenu de la réponse pour mieux comprendre et 
-   * traiter la réponse du serveur.
-   */
-  header('Content-Type: application/json');
+    switch ($todo) {
+        case "readMovies":
+            $age = isset($_GET["age"]) ? intval($_GET["age"]) : 0;
+            $data = readMoviesController($age);
+            break;
+        case "createMovie":
+            $data = createMovieController();
+            break;
+        case "readMovieDetail":
+            $data = readMovieDetailController();
+            break;
+        case "readMoviesByCategory":
+            $data = readMoviesByCategoryController();
+            break;
+        case "readMoviesByAge":
+            $data = readMoviesByAgeController();
+            break;
+        case "readMoviesAgeCategory":
+            $data = readMoviesAgeCategoryController();
+            break;
+        case "readCategories":
+            $data = readCategoriesController();
+            break;
+        case "readProfiles":
+            $data = readProfilesController();
+            break;
+        case "addProfile":
 
-  // Récupère la valeur du paramètre 'todo' dans le tableau $_REQUEST
-  // $_REQUEST est une superglobale qui contient les paramètres de la requête HTTP.
-  $todo = $_REQUEST['todo'];
+        
+             $data = addProfileController();
+            // var_dump($_REQUEST["date_naissance"]);
+            break;
+        default:
+            echo json_encode("[error] Unknown todo value");
+            http_response_code(400);
+            exit();
+    }
 
-  // En fonction de la valeur de 'todo', on appelle la fonction de contrôle appropriée.
-  switch($todo){
-    case "readMovies":
-      $data = readMoviesController();
-      break;
-    case "createMovie":
-      $data = createMovieController();
-      break;
-    case "readMovieDetail":
-      $data = readMovieDetailController();
-      break;
-    default: // Si la valeur de 'todo' n'est pas reconnue
-      echo json_encode('[error] Unknown todo value');
-      http_response_code(400); // 400 == "Bad request"
-      exit();
-  }
-
-  /**
-   * Si la fonction de contrôleur retourne false, cela indique un échec (par exemple, un problème avec la BDD).
-   * On renvoie alors une réponse JSON avec un message d'erreur et un code HTTP 500 (Internal error).
-   */
-  if ($data === false){
-    echo json_encode('[error] Controller returns false');
-    http_response_code(500); // 500 == "Internal error"
+    if ($data === false) {
+        echo json_encode("[error] Controller returns false");
+        http_response_code(500);
+        exit();
+    } else {
+        echo json_encode($data);
+        http_response_code(200);
+        exit();
+    }
+} else {
+    http_response_code(404);
     exit();
-  }
-
-  /**
-   * Si tout s'est bien passé, on renvoie la réponse HTTP avec les données ($data) retournées
-   * par la fonction de contrôleur, encodées en JSON.
-   * On renvoie également un code HTTP 200 (OK) pour indiquer que la requête a été traitée avec succès.
-   */
-  echo json_encode($data);
-  http_response_code(200); // 200 == "OK"
-  exit();
-} // Fin du if ( isset($_REQUEST['todo']) )
-
-/**
- * Cette partie du code n'est atteinte que si la variable 'todo' n'est pas définie dans la requête.
- * La conception de notre script est basée sur le fait qu'une variable todo doit être définie.
- * Dans le cas contraire, on considère que la requête est invalide et on renvoie un code HTTP 404 (Not found),
- * indiquant que la requête HTTP ne correspond à rien.
- */
-http_response_code(404); // 404 == "Not found"
-
-?>
+}

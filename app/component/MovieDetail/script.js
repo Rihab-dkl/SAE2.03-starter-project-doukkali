@@ -13,7 +13,7 @@ MovieDetail.format = function(movie) {
     html = html.replaceAll('{{image}}', movie.image);
     html = html.replaceAll('{{trailer}}', movie.trailer);
     html = html.replaceAll('{{min_age}}', movie.min_age);
-    html = html.replaceAll('{{id_category}}', movie.id_category);
+    html = html.replaceAll('{{id}}', movie.name);
     return html;
 };
 

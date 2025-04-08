@@ -1,59 +1,27 @@
 <?php
-/**
- * Ce fichier contient toutes les fonctions qui réalisent des opérations
- * sur la base de données, telles que les requêtes SQL pour insérer, 
- * mettre à jour, supprimer ou récupérer des données.
- *
- * Définition des constantes de connexion à la base de données.
- *
- * HOST    : Nom d'hôte du serveur de base de données, ici "localhost".
- * DBNAME  : Nom de la base de données.
- * DBLOGIN : Nom d'utilisateur pour se connecter à la base de données.
- * DBPWD   : Mot de passe pour se connecter à la base de données.
- */
 define("HOST", "localhost");
 define("DBNAME", "doukkali-el-u1");
 define("DBLOGIN", "doukkali-el-u1");
 define("DBPWD", "doukkali-el-u1");
 
-/**  
- * Récupère la liste des films dans la base de données.
- *
- * @return array Un tableau d'objets contenant l'id, le nom et l'image pour chaque film.
- */
 function getMovies(){
-    // Connexion à la base de données
-    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME, DBLOGIN, DBPWD);
-    // Requête SQL pour récupérer les films
-    $sql = "SELECT id, name, image FROM Movie";
-    // Prépare la requête SQL
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT 
+                Movie.id,
+                Movie.name,
+                Movie.image,
+                Category.name AS category_name
+            FROM Movie
+            JOIN Category ON Movie.id_category = Category.id";
     $stmt = $cnx->prepare($sql);
-    // Exécute la requête SQL
     $stmt->execute();
-    // Récupère les résultats de la requête sous forme d'objets
-    $res = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $res; // Retourne les résultats
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
-/**
- * Insère 
- *
- * @param string $name
- * @param int    $year
- * @param int    $length
- * @param string $description
- * @param string $director
- * @param string $image
- * @param string $trailer
- * @param int    $min_age
- * @param int    $id
- *
- * @return bool
- */
-function createMovie($name, $year, $length, $description, $director, $image, $trailer, $min_age, $id) {
-    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME, DBLOGIN, DBPWD);
-    $sql = "INSERT INTO Movie (name, year, length, description, director, image, trailer, min_age, id)
-            VALUES (:name, :year, :length, :description, :director, :image, :trailer, :min_age, :id)";
+function createMovie($name, $year, $length, $description, $director, $image, $trailer, $min_age, $id_category) {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "INSERT INTO Movie (name, year, length, description, director, image, trailer, min_age, id_category)
+            VALUES (:name, :year, :length, :description, :director, :image, :trailer, :min_age, :id_category)";
     $stmt = $cnx->prepare($sql);
     return $stmt->execute([
         ":name" => $name,
@@ -64,22 +32,97 @@ function createMovie($name, $year, $length, $description, $director, $image, $tr
         ":image" => $image,
         ":trailer" => $trailer,
         ":min_age" => $min_age,
-        ":id" => $id
+        ":id_category" => $id_category
     ]);
 }
 
-/**
- * Récupère 
- *
- * @param int $id
- * @return mixed tableau contenant les détails du film, ou false si aucun film n'est trouvé.
- */
 function getMovieDetail($id) {
-    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME, DBLOGIN, DBPWD);
-    $sql = "SELECT * FROM Movie WHERE id = :id";
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT 
+                Movie.*,
+                Category.name AS category_name
+            FROM Movie
+            JOIN Category ON Movie.id_category = Category.id
+            WHERE Movie.id = :id";
     $stmt = $cnx->prepare($sql);
     $stmt->execute([":id" => $id]);
-    $res = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $res;
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
-?>
+
+function getMoviesByAge($age) {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT 
+                Movie.id,
+                Movie.name,
+                Movie.image,
+                Category.name AS category_name
+            FROM Movie
+            JOIN Category ON Movie.id_category = Category.id
+            WHERE Movie.min_age <= :age";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute([":age" => $age]);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+function getMoviesByAgeAndCategory($age, $category) {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT 
+                Movie.id,
+                Movie.name,
+                Movie.image,
+                Category.name AS category_name
+            FROM Movie
+            JOIN Category ON Movie.id_category = Category.id
+            WHERE Movie.min_age <= :age AND Category.name = :category";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute([
+        ":age" => $age,
+        ":category" => $category
+    ]);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+function getCategories() {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT name FROM Category";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+function getProfiles() {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "SELECT * FROM Profile";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function addProfile($nom, $photo, $datenaissance) {
+    // var_dump ($nom, $photo, $datenaissance);
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "INSERT INTO Profile (nom_utilisateur, photo_profil, date_naissance) 
+            VALUES (:nom_utilisateur, :photo_profil, :date_naissance)";
+    $stmt = $cnx->prepare($sql);
+    return $stmt->execute([
+        ":nom_utilisateur" => $nom,
+        ":photo_profil" => $photo,
+        ":date_naissance" => $datenaissance
+    ]);
+}
+
+function updateProfile($id, $nom, $photo, $datenaissance) {
+    $cnx = new PDO("mysql:host=" . HOST . ";dbname=" . DBNAME, DBLOGIN, DBPWD);
+    $sql = "UPDATE Profile 
+            SET nom_utilisateur = :nom_utilisateur, 
+                photo_profil = :photo_profil, 
+                date_naissance = :date_naissance 
+            WHERE id = :id";
+    $stmt = $cnx->prepare($sql);
+    return $stmt->execute([
+        ":id" => $id,
+        ":nom_utilisateur" => $nom,
+        ":photo_profil" => $photo,
+        ":date_naissance" => $datenaissance
+    ]);
+}
