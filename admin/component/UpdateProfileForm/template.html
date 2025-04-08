@@ -1,0 +1,18 @@
+<section class="update-profile-form">
+  <h2 class="form-title">Modifier un profil utilisateur</h2>
+  <form id="form-update-profile" class="profile-form" onsubmit="{{handler}}">
+    <label for="id" class="form-label">ID du profil :</label>
+    <input type="number" name="id" id="id" class="form-input" required>
+
+    <label for="nom_utilisateur" class="form-label">Nom du profil :</label>
+    <input type="text" name="nom_utilisateur" id="nom_utilisateur" class="form-input" required>
+
+    <label for="photo_profil" class="form-label">Photo de profil :</label>
+    <input type="text" name="photo_profil" id="photo_profil" class="form-input">
+
+    <label for="date_naissance" class="form-label">Date de naissance :</label>
+    <input type="date" name="date_naissance" id="date_naissance" class="form-input" required>
+
+    <button type="submit" class="form-button">Mettre à jour</button>
+  </form>
+</section>

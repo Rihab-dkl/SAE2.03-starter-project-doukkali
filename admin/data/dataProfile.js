@@ -19,4 +19,14 @@ DataProfile.add = async function (formData) {
   return await answer.json();
 };
 
+DataProfile.update = async function (formData) {
+  let answer = await fetch(HOST_URL + "/server/script.php?todo=updateProfile", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!answer.ok) return false;
+  return await answer.json();
+};
+
 export { DataProfile };

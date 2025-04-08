@@ -32,10 +32,10 @@ if (isset($_REQUEST["todo"])) {
             $data = readProfilesController();
             break;
         case "addProfile":
-
-        
-             $data = addProfileController();
-            // var_dump($_REQUEST["date_naissance"]);
+            $data = addProfileController();
+            break;
+        case "updateProfile":
+            $data = updateProfileController();
             break;
         default:
             echo json_encode("[error] Unknown todo value");

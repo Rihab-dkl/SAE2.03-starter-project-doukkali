@@ -10,6 +10,7 @@
     <section id="log"></section>
     <section id="addMovie"></section>
     <section id="addUser"></section>
+    <section id="updateProfile"></section>
 
     <script type="module">
       import { Log } from "./component/Log/script.js";
@@ -17,6 +18,7 @@
       import { DataForm } from "./data/dataForm.js";
       import { DataProfile } from "./data/dataProfile.js";
       import { ProfileForm } from "./component/ProfileForm/script.js";
+      import { UpdateProfileForm } from "./component/UpdateProfileForm/script.js";
 
       window.C = {};
 
@@ -29,10 +31,19 @@
         V.renderLog(res ? "Le profil a été ajouté avec succès." : "Erreur lors de l'ajout du profil.");
       };
 
+      C.handlerUpdateProfile = async function (event) {
+        event.preventDefault();
+        let form = document.querySelector("#form-update-profile");
+        let fd = new FormData(form);
+        let res = await DataProfile.update(fd);
+        V.renderLog(res ? "Le profil a été modifié avec succès." : "Erreur lors de la modification du profil.");
+      };
+
       C.start = function () {
         V.renderLog("Démarrage de l'application");
         V.renderNewMeovie("../server/script.php?todo=createMovie");
         V.renderAddUserForm("C.handlerAddProfile(event)");
+        V.renderUpdateProfileForm("C.handlerUpdateProfile(event)");
       };
 
       window.V = {};
@@ -50,10 +61,15 @@
         content.innerHTML = Log.format(txt);
       };
 
-            // Affichage du formulaire d'ajout utilisateur
-        V.renderAddUserForm = function (handler) {
+      // Affichage du formulaire d'ajout utilisateur
+      V.renderAddUserForm = function (handler) {
         let content = document.querySelector("#addUser");
         content.innerHTML = ProfileForm.format(handler);
+      };
+
+      V.renderUpdateProfileForm = function (handler) {
+        let content = document.querySelector("#updateProfile");
+        content.innerHTML = UpdateProfileForm.format(handler);
       };
 
       C.start();
