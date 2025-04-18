@@ -1,23 +1,21 @@
-/* movie-detail.css */
-/* Mobile-first : on empile en colonne */
 .movie-detail {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 1rem;
-  margin: 1rem auto;
-  max-width: 600px; /* limite la largeur sur écran large */
   display: flex;
-  flex-direction: column; /* Sur mobile, tout s’empile */
+  flex-direction: column;
   gap: 1rem;
-  font-family: sans-serif;
+  max-width: 37.5rem;
+  margin: 1rem auto;
+  padding: 1rem;
+  font-family: var(--ff-sans);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: 0.3125rem;
 }
 
 .movie-detail__title {
-  font-size: 1.2rem;
   margin: 0;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text-dark);
 }
 
 .movie-detail__year,
@@ -26,22 +24,22 @@
 .movie-detail__description,
 .movie-detail__min-age,
 .movie-detail__category {
-  font-size: 0.9rem;
-  color: #555;
   margin: 0.2rem 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 
 .movie-detail__description {
-  line-height: 1.4;
   margin: 0.5rem 0;
+  line-height: 1.4;
 }
 
 .movie-detail__image {
-  width: 100%;
-  max-width: 300px; /* l’image ne dépasse pas 300px de large */
   display: block;
-  margin: 0 auto;   /* centrée sur mobile */
-  border-radius: 3px;
+  width: 100%;
+  max-width: 18.75rem;
+  margin: 0 auto;
+  border-radius: 0.1875rem;
 }
 
 .movie-detail__trailer {
@@ -50,24 +48,21 @@
 
 .movie-detail__trailer iframe {
   width: 100%;
-  max-width: 560px; /* sur écran large */
+  max-width: 35rem;
   aspect-ratio: 16 / 9;
   border: none;
 }
 
-/* ----- Écrans ≥768px : on passe en disposition “row” ----- */
 @media (min-width: 768px) {
   .movie-detail {
-
-    max-width: 900px;    /* on élargit la fiche sur grand écran */
+    max-width: 56.25rem;
   }
 
-  /* On peut mettre l’image à gauche, le texte à droite par ex. */
   .movie-detail__image {
-    margin: 0; /* plus besoin d’auto sur grand écran */
+    margin: 0;
   }
 
   .movie-detail__trailer {
-    text-align: left; /* si tu préfères aligner le trailer à gauche */
+    text-align: left;
   }
 }

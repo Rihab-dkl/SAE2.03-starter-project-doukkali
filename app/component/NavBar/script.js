@@ -3,7 +3,7 @@ let template = await templateFile.text();
 
 let NavBar = {};
 
-NavBar.format = function(hAbout, hHome, profiles) {
+NavBar.format = function(hAbout, hHome, hFavorites, profiles) {
   let html = template;
   let profileOptions = profiles
     .map(p => 
@@ -15,8 +15,10 @@ NavBar.format = function(hAbout, hHome, profiles) {
       </option>`
     ).join("");
 
+    console.log(profiles);
   html = html.replace('{{hAbout}}', hAbout);
   html = html.replace('{{hHome}}', hHome);
+  html = html.replace('{{hFavorites}}', hFavorites || '');
   html = html.replace('{{profileOptions}}', profileOptions);
   return html;
 };

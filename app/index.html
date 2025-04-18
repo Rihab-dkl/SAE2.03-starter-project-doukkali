@@ -14,14 +14,14 @@
     <section id="content" class="movie-container"></section>
 
     <script type="module">
+      window.C = {};
       import { NavBar } from "./component/NavBar/script.js";
       import { DataMovie } from "./data/dataMovie.js";
       import { Movie } from "./component/Movie/script.js";
       import { MovieDetail } from "./component/MovieDetail/script.js";
       import { Moviecategorie } from "./component/Moviecategorie/script.js";
       import { DataProfile } from "./data/dataProfile.js";
-
-      window.C = {};
+      import { RecommendedCard } from "./component/RecommendedCard/script.js";
 
       C.handlerAbout = function () {
         alert("Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !");
@@ -29,6 +29,15 @@
 
       C.handlerHome = function () {
         C.handlerReadMovies();
+      };
+
+      C.handlerFavorites = async function () {
+        if (!C.activeProfileId) {
+          alert("Veuillez d'abord choisir un profil.");
+          return;
+        }
+        const movies = await DataMovie.readFavori(C.activeProfileId);
+        V.renderMovies(movies);
       };
 
       C.handlerReadMovies = async function () {
@@ -54,20 +63,30 @@
         V.renderMovies(data);
       };
 
+      C.handlerFilmsMisEnAvant = async function () {
+        const movies = await DataMovie.readFilmsMisEnAvant();
+        if (!movies || movies.length === 0) {
+          document.querySelector("#infos").innerHTML = `<p class="no-movie">Aucun film mis en avant pour le moment.</p>`;
+        } else {
+          V.renderRecommendedCard(movies);
+        }
+      };
+
       C.start = async function () {
-        await V.renderNavBar("C.handlerAbout()", "C.handlerHome()");
+        C.activeProfileId = null;
+        const profiles = await DataProfile.read();
+        const profilesArray = Array.isArray(profiles) ? profiles : Object.values(profiles);
+        await V.renderNavBar("C.handlerAbout()", "C.handlerHome()", "C.handlerFavorites()", profilesArray);
         V.renderMovieCategorie();
+      C.handlerFilmsMisEnAvant();
         C.handlerReadMovies();
       };
 
       C.handlerProfile = async function () {
         const select = document.querySelector("#profile-select");
+        C.activeProfileId = parseInt(select.value);
         const selectedOption = select.selectedOptions[0];
         const naissance = selectedOption.getAttribute("data-naissance");
-        const imageFilename = selectedOption.getAttribute("data-img");
-        const picture = document.querySelector("#profile-picture");
-        const base = "https://mmi.unilim.fr/~~doukkali-el-u1/SAE2.03-starter-project-doukkali/server/images/";
-        picture.src = base + imageFilename;
 
         let birthDate = new Date(naissance);
         let today = new Date();
@@ -77,12 +96,76 @@
         C.userAge = age;
       };
 
+      C.handlerAddFavoris = async function (id_movie, el) {
+        if (!C.activeProfileId) {
+          alert("Veuillez d'abord choisir un profil.");
+          return;
+        }
+        const exists = await DataMovie.checkFavori(C.activeProfileId, id_movie);
+        if (exists) {
+          alert("Ce film est déjà dans vos favoris.");
+          return;
+        }
+        const data = await DataMovie.addFavori(C.activeProfileId, id_movie);
+        if (data.success) {
+          alert("Le film a été ajouté à vos favoris !");
+        } else {
+          alert("Ce film a été ajouté à vos favoris");
+        }
+      };
+
+      C.handlerRemoveFavoris = async function (id_movie) {
+        const data = await DataMovie.deleteFavori(C.activeProfileId, id_movie);
+
+        if (data.exists === false) {
+          const confirmAdd = confirm("Ce film n'est pas dans vos favoris. Voulez-vous l'ajouter ?");
+
+          if (confirmAdd) {
+            const res = await DataMovie.addFavori(C.activeProfileId, id_movie);
+
+            if (res.success) {
+              alert("Le film a été ajouté à vos favoris !");
+            } else {
+              alert("Ce film a été ajouté à vos favoris");
+            }
+          }
+        } else if (data.success) {
+          alert("Le film a été supprimé de vos favoris !");
+          await C.handlerProfilePage();
+          return;
+        } else {
+          alert("Une erreur est survenue.");
+        }
+
+        const button = document.querySelector(`button[data-id="${id_movie}"]`);
+        button.querySelector('.movie__add').classList.toggle('hide');
+        button.querySelector('.movie__delete').classList.toggle('hide');
+      };
+
+      C.handlerProfilePage = async function () {
+        if (!C.activeProfileId) {
+          alert("Veuillez d'abord choisir un profil.");
+          return;
+        }
+
+        const profile = await DataProfile.profilePage(C.activeProfileId);
+        const movies = await DataMovie.readFavori(C.activeProfileId);
+
+        document.querySelector("#content").innerHTML = ProfilePage.format(profile, movies);
+      };
+
       window.V = {};
 
-      V.renderNavBar = async function (hAbout, hHome) {
+      V.renderNavBar = async function (hAbout, hHome, hFavorites, profiles) {
         let header = document.querySelector("#header");
-        let profiles = await DataProfile.read();
-        header.innerHTML = NavBar.format(hAbout, hHome, profiles);
+        let html = NavBar.format(hAbout, hHome, hFavorites, profiles);
+        header.innerHTML = html;
+        const select = document.getElementById("profile-select");
+        if (select) {
+          select.addEventListener("change", () => {
+            C.handlerProfile();
+          });
+        }
       };
 
       V.renderMovies = function (films) {
@@ -107,6 +190,10 @@
         container.innerHTML = Moviecategorie.format(categories);
       };
 
+      V.renderRecommendedCard = function (movies) {
+        const container = document.querySelector("#infos");
+        container.innerHTML = RecommendedCard.format(movies);
+      };
 
       C.start();
     </script>

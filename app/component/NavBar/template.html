@@ -3,16 +3,14 @@
     <div class="navbar__links">
       <li class="navbar__item" onclick="{{hAbout}}">About</li>
       <li class="navbar__item" onclick="{{hHome}}">Home</li>
+      <li class="navbar__item" onclick="{{hFavorites}}">Favoris</li>
     </div>
     <div class="navbar__profile">
       <li class="navbar__item">
         <select id="profile-select" onchange="C.handlerProfile()">
-          <option>None</option>
+          <option>Choisir un compte</option>
           {{profileOptions}}
         </select>
-      </li>
-      <li class="navbar__item">
-        <img id="profile-picture" src="../../../server/images/{{photo_profil}}" alt="profil" class="profile-picture" />
       </li>
     </div>
   </ul>

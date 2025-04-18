@@ -24,6 +24,13 @@
   }
 }
 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 @keyframes fondu-en-entree {
   from {
     opacity: 0;

@@ -116,3 +116,122 @@ function updateProfileController() {
         return false;
     }
 }
+
+function addFavoriController() {
+    if (isset($_REQUEST['id_profile']) && isset($_REQUEST['id_movie'])) {
+        $profileId = $_REQUEST['id_profile'];
+        $movieId   = $_REQUEST['id_movie'];
+
+        // Vérifie si ce favori existe déjà
+        $exists = verifyFavorite($profileId, $movieId);
+        if ($exists) {
+            return ["alreadyFavoris" => true]; 
+        }
+
+        // Sinon on l'ajoute
+        $ok = addFavori($profileId, $movieId);
+        if ($ok != 0) {
+            return ["success" => true];
+        } else {
+            return ["success" => false];
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * openProfileViewController
+ * 
+ * Ouvre la page de profil pour afficher ses informations (nom, photo, etc.)
+ * Paramètre attendu : id_profile
+ * 
+ * @return mixed Objet contenant les infos du profil, ou false si paramètre manquant
+ */
+function openProfileViewController() {
+    if (isset($_REQUEST['id_profile'])) {
+        $profileId = $_REQUEST['id_profile'];
+        $profile = openProfileView($profileId);
+        return $profile;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * readFavoriController
+ * 
+ * Récupère la liste des films favoris d'un profil
+ * Paramètre attendu : id_profile
+ * 
+ * @return mixed Tableau d'objets films favoris, ou false si paramètre manquant
+ */
+function readFavorisController() {
+    if (isset($_REQUEST['id_profile'])) {
+        $profileId = $_REQUEST['id_profile'];
+        $moviesFav = getFavori($profileId);
+        return $moviesFav;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * removeFavoriController
+ * 
+ * Supprime un film des favoris d'un profil s'il y est déjà
+ * Paramètres attendus : id_profile, id_movie
+ * 
+ * @return array Un tableau indiquant si le film existait et si la suppression a réussi
+ */
+function removeFavoriController() {
+    if (isset($_REQUEST['id_profile']) && isset($_REQUEST['id_movie'])) {
+        $profileId = $_REQUEST['id_profile'];
+        $movieId   = $_REQUEST['id_movie'];
+
+        $exists = verifyFavorite($profileId, $movieId);
+        if (!$exists) {
+            return ["wasNotFavoris" => true]; 
+        }
+
+        $ok = removeFavori($profileId, $movieId);
+        if ($ok != 0) {
+            return ["success" => true];
+        } else {
+            return ["success" => false];
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * checkFavoriController
+ * 
+ * Vérifie si un film est dans les favoris d’un utilisateur
+ * Paramètres attendus : id_profile, id_movie
+ * 
+ * @return array Un tableau contenant "exists" => true|false
+ */
+function checkFavoriController() {
+    if (isset($_REQUEST['id_profile']) && isset($_REQUEST['id_movie'])) {
+        $profileId = $_REQUEST['id_profile'];
+        $movieId   = $_REQUEST['id_movie'];
+
+        $exists = verifyFavorite($profileId, $movieId);
+        return ["exists" => $exists];
+    } else {
+        return ["exists" => false];
+    }
+}
+
+/**
+ * readFilmsMisEnAvantController
+ * 
+ * Récupère la liste des films marqués comme mis en avant.
+ * 
+ * @return mixed Tableau d'objets films mis en avant, ou false si erreur
+ */
+function readFilmsMisEnAvantController() {
+    return getFilmsMisEnAvant();
+}
